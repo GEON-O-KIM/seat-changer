@@ -11,7 +11,7 @@
     --paper: #F6F5F1; --surface: #FFFFFF; --sunk: #ECEAE4; --line: #E4E2DB; --line-soft: #EFEDE7;
     --ink: #1C1F23; --muted: #5F6368;
     --accent: #2E6B5E; --accent-ink: #1F4D43; --accent-soft: #E6EFEC; --accent-line: #9CC0B6;
-    --warn-soft: #F6EEDF; --warn-ink: #6E4210; --warn-line: #E2C79A;
+    --warn: #A0620F; --warn-soft: #F6EEDF; --warn-ink: #6E4210; --warn-line: #E2C79A;
     --boy: #4A6FA5; --girl: #B0587A;
   }
   * { box-sizing: border-box; }
@@ -20,7 +20,6 @@
   button { cursor: pointer; }
 
   .mock { background: var(--sunk); color: var(--muted); font-size: 12px; text-align: center; padding: 6px 16px; }
-  .mock button { border: 0; background: none; color: var(--accent); text-decoration: underline; padding: 0 4px; font-size: 12px; }
 
   header { background: var(--surface); border-bottom: 1px solid var(--line); padding: 0 32px; min-height: 64px; display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: center; justify-content: space-between; }
   .brand { display: flex; gap: 10px; align-items: baseline; }
@@ -45,18 +44,26 @@
   .row { display: flex; gap: 8px; align-items: center; }
   .between { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
 
-  textarea, input[type=text], input[type=number], select { width: 100%; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: 10px 12px; }
+  textarea, input[type=text], select { width: 100%; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: 10px 12px; }
   textarea { resize: vertical; line-height: 1.7; }
-  label.field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); flex: 1; }
 
   .btn { height: 44px; padding: 0 18px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); }
+  .btn:disabled { color: #A5A7AA; cursor: default; }
   .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
   .btn.dark { background: var(--ink); border-color: var(--ink); color: #fff; font-weight: 600; }
   .btn.block { width: 100%; height: 52px; font-size: 15px; }
+  .btn.sm { height: 36px; padding: 0 12px; font-size: 13px; border-radius: 8px; }
 
   .seg { display: inline-flex; gap: 2px; padding: 3px; background: var(--sunk); border-radius: 8px; }
-  .seg button { border: 0; background: none; color: var(--muted); height: 30px; padding: 0 12px; border-radius: 6px; font-size: 12px; }
+  .seg button { border: 0; background: none; color: var(--muted); height: 32px; padding: 0 12px; border-radius: 6px; font-size: 13px; }
   .seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+
+  .stepper { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .stepper button { width: 36px; height: 36px; border: 0; background: var(--surface); font-size: 16px; }
+  .stepper button:hover { background: var(--sunk); }
+  .stepper span { min-width: 28px; text-align: center; font-weight: 600; }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; padding: 12px 14px; background: var(--paper); border-radius: 10px; }
+  .toolbar .lbl { font-size: 13px; color: var(--muted); margin-right: 6px; }
 
   .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; background: var(--sunk); font-size: 12px; color: var(--muted); }
   .name { display: inline-block; padding: 2px 10px; border-radius: 6px; background: var(--accent-soft); color: var(--accent-ink); font-weight: 500; }
@@ -67,15 +74,31 @@
   .board { width: 240px; height: 30px; border-radius: 6px; background: var(--sunk); color: var(--muted); font-size: 12px; display: flex; align-items: center; justify-content: center; }
   .srow { display: flex; gap: 32px; }
   .pair { display: flex; gap: 6px; }
-  .seat { width: 104px; height: 56px; border-radius: 8px; border: 1px solid var(--line); background: #FAFAF8; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; position: relative; padding: 0; }
+  .seat { width: 104px; height: 56px; border-radius: 8px; border: 1px solid var(--line); background: #FAFAF8; position: relative; }
+  .seat > .main { width: 100%; height: 100%; border: 0; background: none; border-radius: 8px; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; }
   .seat .n { font-size: 14px; }
   .seat .f { font-size: 11px; color: var(--muted); }
-  .seat .g { position: absolute; top: 6px; left: 7px; width: 6px; height: 6px; border-radius: 50%; }
+  .seat .g { position: absolute; top: 7px; left: 8px; width: 6px; height: 6px; border-radius: 50%; }
   .seat .g.m { background: var(--boy); } .seat .g.w { background: var(--girl); }
   .seat.tag { background: var(--accent-soft); border-color: var(--accent-line); }
-  .seat.empty { background: repeating-linear-gradient(135deg, transparent 0 6px, var(--line-soft) 6px 8px); border-style: dashed; color: var(--muted); }
-  .legend { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; font-size: 12px; color: var(--muted); }
+  .seat.vacant { background: var(--surface); border-style: dashed; }
+  .seat.vacant .n { color: var(--muted); font-size: 12px; }
+  .seat.sel { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .seat.pin { border: 1.5px solid var(--ink); }
+  .seat.none { visibility: hidden; }
+  .lock { position: absolute; top: 2px; right: 2px; width: 28px; height: 28px; border: 0; background: none; color: var(--muted); opacity: .45; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+  .lock:hover { opacity: 1; background: rgba(0,0,0,.05); }
+  .seat.pin .lock { opacity: 1; color: var(--ink); }
+  /* edit mode */
+  .seat.desk { background: #EFEBE2; border-color: #CFC9BC; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 12px; padding: 0; }
+  .seat.slot { background: none; border: 1px dashed var(--line); color: #B3B0A8; font-size: 18px; padding: 0; }
+  .seat.slot:hover { border-color: var(--accent); color: var(--accent); }
+  .seat.desk:hover { border-color: var(--warn); color: var(--warn); }
+
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; font-size: 12px; color: var(--muted); align-items: center; }
   .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+  .hint { text-align: center; font-size: 13px; color: var(--muted); min-height: 20px; }
+  .hint.warn { color: var(--warn); }
 
   /* rules */
   .rule { padding: 16px 20px; border-top: 1px solid var(--line-soft); display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
@@ -88,7 +111,7 @@
   .x { width: 36px; height: 36px; border: 0; background: none; color: var(--muted); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
   .x:hover { background: var(--sunk); }
 
-  .toggle { display: flex; align-items: center; gap: 12px; min-height: 56px; border-top: 1px solid var(--line-soft); cursor: pointer; }
+  .toggle { display: flex; align-items: center; gap: 12px; min-height: 56px; border-top: 1px solid var(--line-soft); cursor: pointer; position: relative; }
   .toggle:first-of-type { border-top: 0; }
   .toggle .t { flex: 1; display: flex; flex-direction: column; }
   .toggle input { position: absolute; opacity: 0; pointer-events: none; }
@@ -101,9 +124,10 @@
   .note { padding: 14px 16px; border-radius: 10px; background: var(--warn-soft); color: var(--warn-ink); font-size: 13px; line-height: 1.6; }
 
   .check { display: flex; gap: 10px; align-items: center; min-height: 46px; border-top: 1px solid var(--line-soft); font-size: 13px; }
-  .check:first-of-type { border-top: 0; }
-  .check span:nth-child(2) { flex: 1; }
+  .check:first-child { border-top: 0; }
+  .check .t { flex: 1; }
   .check .tiny { text-align: right; }
+  .check.bad .t, .check.bad .tiny { color: var(--warn); }
 
   .scope { display: flex; gap: 14px; align-items: center; }
   .mini { display: grid; grid-template-columns: repeat(3, 18px); gap: 3px; }
@@ -111,17 +135,16 @@
   .mini i.me { background: var(--ink); }
   .mini i.no { background: var(--accent-line); }
 
-  .conflict { border: 1px solid var(--warn-line); background: var(--warn-soft); border-radius: 12px; padding: 20px; color: var(--warn-ink); display: flex; flex-direction: column; gap: 10px; }
+  .conflict { border: 1px solid var(--warn-line); background: var(--warn-soft); border-radius: 12px; padding: 18px 20px; color: var(--warn-ink); display: flex; flex-direction: column; gap: 8px; }
   .conflict ul { margin: 0; padding-left: 18px; line-height: 1.8; }
 </style>
 </head>
 <body>
 
-<div class="mock">목업입니다 — 버튼 일부만 동작하고 저장되지 않습니다. 이름은 모두 예시입니다.
-  <button type="button" id="demoConflict">조건이 불가능할 때 화면 보기</button></div>
+<div class="mock">목업입니다 — 저장되지 않고, 이름은 모두 예시입니다. 조건이 부딪히는 경우를 보려면 조건에 “민준이랑 서연이 짝으로”를 추가해 보세요.</div>
 
 <header>
-  <div class="brand"><b>자리 바꾸기</b><span>우리 반 · 24명</span></div>
+  <div class="brand"><b>자리 바꾸기</b><span>우리 반 · 25명</span></div>
   <nav aria-label="단계">
     <button type="button" data-go="setup" aria-current="true">1 반 설정</button>
     <button type="button" data-go="rules">2 조건</button>
@@ -134,8 +157,8 @@
   <section class="view" id="setup">
     <div class="side">
       <div class="card pad" style="display:flex;flex-direction:column;gap:8px">
-        <div class="between"><h3><label for="roster">학생 명단</label></h3><span class="tiny">남 12 · 여 12</span></div>
-        <textarea id="roster" rows="12">김민준 남
+        <div class="between"><h3><label for="roster">학생 명단</label></h3><span class="tiny">남 13 · 여 12</span></div>
+        <textarea id="roster" rows="14">김민준 남
 이서연 여
 박도윤 남
 최하은 여
@@ -143,28 +166,32 @@
 강지유 여
 조서준 남
 윤하린 여
-…</textarea>
+장예준 남
+임수아 여
+…
+배수호 남</textarea>
         <p class="tiny" style="margin:0">한 줄에 “이름 남/여”. 엑셀에서 이름·성별 두 열을 복사해 붙여넣어도 됩니다.</p>
-      </div>
-
-      <div class="card pad" style="display:flex;flex-direction:column;gap:12px">
-        <h3>교실 크기 <span class="tiny" style="font-weight:400">· 2인 짝 책상</span></h3>
-        <div class="row">
-          <label class="field">줄 (앞→뒤)<input type="number" value="4" min="1" max="8"></label>
-          <label class="field">분단<input type="number" value="3" min="1" max="5"></label>
-        </div>
-        <p class="tiny" style="margin:0">자리를 누르면 빈자리(사용 안 함)로 바뀝니다. 학생 수가 홀수면 한 자리를 비워 두세요.</p>
       </div>
     </div>
 
     <div class="grow">
-      <div class="card pad" style="display:flex;flex-direction:column;gap:18px">
+      <div class="card pad" style="display:flex;flex-direction:column;gap:16px">
         <div class="between">
-          <div><h2>지금 자리</h2><p class="sub">9월 1일에 확정한 자리. 새 자리는 이것과 겹치지 않게 뽑습니다.</p></div>
-          <button type="button" class="btn">직접 수정</button>
+          <div><h2>교실</h2><p class="sub" id="setupSub"></p></div>
+          <div class="seg" role="group" aria-label="보기">
+            <button type="button" data-mode="seats" aria-pressed="true">지금 자리</button>
+            <button type="button" data-mode="desks" aria-pressed="false">책상 배치 바꾸기</button>
+          </div>
         </div>
+
+        <div class="toolbar" id="deskTools" hidden>
+          <span class="row"><span class="lbl">줄</span><span class="stepper"><button type="button" aria-label="줄 빼기" data-step="R:-1">−</button><span id="rVal"></span><button type="button" aria-label="줄 추가" data-step="R:1">+</button></span></span>
+          <span class="row"><span class="lbl">분단</span><span class="stepper"><button type="button" aria-label="분단 빼기" data-step="G:-1">−</button><span id="gVal"></span><button type="button" aria-label="분단 추가" data-step="G:1">+</button></span></span>
+          <span class="tiny" id="deskCount" style="margin-left:auto"></span>
+        </div>
+
         <div class="chart-wrap"><div class="chart" id="oldChart"></div></div>
-        <div class="legend"><span><i style="background:var(--boy)"></i>남</span><span><i style="background:var(--girl)"></i>여</span></div>
+        <div class="hint" id="setupHint"></div>
       </div>
       <div style="display:flex;justify-content:flex-end"><button type="button" class="btn primary" data-go="rules">다음: 조건 입력</button></div>
     </div>
@@ -198,9 +225,9 @@
     <div class="side">
       <div class="card pad">
         <h3 style="margin-bottom:6px">기본 규칙</h3>
-        <label class="toggle"><span class="t"><span>지난 자리 피하기</span><span class="tiny">같은 자리에 다시 앉지 않게</span></span><input type="checkbox" checked><span class="sw"></span></label>
-        <label class="toggle"><span class="t"><span>지난 짝 피하기</span><span class="tiny">같은 짝과 다시 앉지 않게</span></span><input type="checkbox" checked><span class="sw"></span></label>
-        <label class="toggle"><span class="t"><span>남녀 짝</span><span class="tiny">짝은 남학생 1명 + 여학생 1명</span></span><input type="checkbox" checked><span class="sw"></span></label>
+        <label class="toggle"><span class="t"><span>지난 자리 피하기</span><span class="tiny">같은 자리에 다시 앉지 않게</span></span><input type="checkbox" id="tPrev" checked><span class="sw"></span></label>
+        <label class="toggle"><span class="t"><span>지난 짝 피하기</span><span class="tiny">같은 짝과 다시 앉지 않게</span></span><input type="checkbox" id="tPair" checked><span class="sw"></span></label>
+        <label class="toggle"><span class="t"><span>남녀 짝</span><span class="tiny">짝은 남학생 1명 + 여학생 1명</span></span><input type="checkbox" id="tMix" checked><span class="sw"></span></label>
       </div>
 
       <div class="card pad" style="display:flex;flex-direction:column;gap:10px">
@@ -213,33 +240,29 @@
 
       <div class="note"><b>반드시</b>는 절대 어기지 않고, <b>되도록</b>은 가능한 한 지킵니다. 반드시 조건끼리 부딪히면 어떤 조건 때문인지 알려 드려요.</div>
 
-      <button type="button" class="btn primary block" data-go="result">자리 뽑기</button>
+      <button type="button" class="btn primary block" id="drawBtn">자리 뽑기</button>
     </div>
   </section>
 
   <!-- 3. 결과 -->
   <section class="view" id="result" hidden>
     <div class="grow">
-      <div class="conflict" id="conflict" hidden>
-        <b>이 조건으로는 자리를 만들 수 없어요</b>
-        <ul>
-          <li>“앞 2줄 안에”(반드시)인 남학생이 7명 — <span class="name">박도윤</span> <span class="name">정시우</span> <span class="name">한지호</span> <span class="name">권유준</span> <span class="name">안건우</span> <span class="name">서은우</span> <span class="name">문이안</span></li><li>그런데 “남녀 짝”이 켜져 있어서 앞 2줄의 남학생 자리는 6개뿐입니다.</li>
-        </ul>
-        <div class="row" style="flex-wrap:wrap"><button type="button" class="btn" data-go="rules">조건 고치기</button><span class="tiny" style="color:inherit">또는 그중 일부를 “되도록”으로 바꾸면 가장 가깝게 맞춰 드려요.</span></div>
-      </div>
+      <div class="conflict" id="conflict" hidden></div>
 
-      <div class="card pad" style="display:flex;flex-direction:column;gap:18px">
+      <div class="card pad" style="display:flex;flex-direction:column;gap:16px">
         <div class="between">
-          <div><h2>새 자리</h2><p class="sub">9월 17일 · 후보 수천 개 중 조건을 가장 잘 지킨 배치</p></div>
+          <div><h2>새 자리</h2><p class="sub" id="resultSub">조건을 가장 잘 지킨 배치</p></div>
           <div class="seg" role="group" aria-label="보는 방향">
             <button type="button" aria-pressed="true" data-view="student">학생 시점</button>
             <button type="button" aria-pressed="false" data-view="teacher">교사 시점</button>
           </div>
         </div>
         <div class="chart-wrap"><div class="chart" id="newChart"></div></div>
+        <div class="hint" id="resultHint">두 자리를 차례로 누르면 서로 바뀝니다. 자물쇠를 누르면 그 학생은 다시 뽑아도 그 자리에 남습니다.</div>
         <div class="legend">
           <span><i style="background:var(--boy)"></i>남</span><span><i style="background:var(--girl)"></i>여</span>
           <span><i style="background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:3px"></i>조건이 걸린 학생</span>
+          <span><i style="background:none;border:1.5px solid var(--ink);border-radius:3px"></i>고정한 학생</span>
           <span>작은 글씨 = 지난 자리 (줄-분단)</span>
         </div>
       </div>
@@ -247,84 +270,56 @@
 
     <div class="side">
       <div class="card pad">
-        <div class="between" style="margin-bottom:6px"><h3>조건 확인</h3><span style="font-size:13px;color:var(--accent);font-weight:500">7개 모두 지킴</span></div>
+        <div class="between" style="margin-bottom:6px"><h3>조건 확인</h3><span id="checkSum" style="font-size:13px;font-weight:500"></span></div>
         <div id="checks"></div>
       </div>
-      <div class="row"><button type="button" class="btn" style="flex:1">다시 뽑기</button><button type="button" class="btn" style="flex:1">인쇄 · 크게 보기</button></div>
-      <button type="button" class="btn primary block">이 자리로 확정</button>
-      <p class="tiny" style="text-align:center;margin:0">확정하면 다음번 ‘지난 자리’로 저장됩니다.</p>
+      <div class="row">
+        <button type="button" class="btn" style="flex:1" id="regen">고정 빼고 다시 뽑기</button>
+        <button type="button" class="btn" style="flex:1" id="undo">되돌리기</button>
+      </div>
+      <button type="button" class="btn">인쇄 · 크게 보기</button>
+      <button type="button" class="btn primary block" id="confirmBtn">이 자리로 확정</button>
+      <p class="tiny" style="text-align:center;margin:0" id="confirmNote">확정하면 다음번 ‘지난 자리’로 저장됩니다.</p>
     </div>
   </section>
 </main>
 
 <script>
-  const G = { 김민준:'m',이서연:'w',박도윤:'m',최하은:'w',정시우:'m',강지유:'w',조서준:'m',윤하린:'w',장예준:'m',임수아:'w',한지호:'m',오채원:'w',
-              서은우:'m',신지안:'w',권유준:'m',황다은:'w',안건우:'m',송윤서:'w',류현우:'m',전소율:'w',홍주원:'m',고아린:'w',문이안:'m',양나은:'w' };
-  const OLD = [
-    ['김민준','이서연','박도윤','최하은','정시우','강지유'],
-    ['조서준','윤하린','장예준','임수아','한지호','오채원'],
-    ['서은우','신지안','권유준','황다은','안건우','송윤서'],
-    ['류현우','전소율','홍주원','고아린','문이안','양나은']
-  ];
-  const NEW = [
-    ['박도윤','강지유','오채원','류현우','윤하린','정시우'],
-    ['이서연','서은우','권유준','전소율','황다은','장예준'],
-    ['신지안','홍주원','안건우','고아린','김민준','임수아'],
-    ['한지호','양나은','최하은','문이안','조서준','송윤서']
-  ];
-  const TAGGED = ['김민준','이서연','정시우','한지호','박도윤','안건우','고아린'];
-  const WHERE = {};
-  OLD.forEach((r, ri) => r.forEach((n, ci) => { WHERE[n] = (ri + 1) + '-' + (Math.floor(ci / 2) + 1); }));
+  // ---------- 데이터 ----------
+  const GENDER = { 김민준:'m',이서연:'w',박도윤:'m',최하은:'w',정시우:'m',강지유:'w',조서준:'m',윤하린:'w',장예준:'m',임수아:'w',한지호:'m',오채원:'w',
+                   서은우:'m',신지안:'w',권유준:'m',황다은:'w',안건우:'m',송윤서:'w',류현우:'m',전소율:'w',홍주원:'m',고아린:'w',문이안:'m',양나은:'w',배수호:'m' };
+  const NAMES = Object.keys(GENDER);
 
-  const empty = new Set();
+  let R = 5, G = 3;
+  const cols = () => G * 2;
+  const key = (r, c) => r + ':' + c;
+  const rc = (k) => k.split(':').map(Number);
 
-  function seatEl(name, opts) {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'seat';
-    if (opts.key && empty.has(opts.key)) {
-      b.classList.add('empty');
-      b.innerHTML = '<span class="f">빈자리</span>';
-    } else {
-      if (opts.tag && TAGGED.includes(name)) b.classList.add('tag');
-      b.innerHTML = '<span class="g ' + G[name] + '"></span><span class="n">' + name + '</span>' +
-        (opts.from ? '<span class="f">' + WHERE[name] + '</span>' : '');
-    }
-    b.setAttribute('aria-label', name);
-    if (opts.key) b.addEventListener('click', () => { empty.has(opts.key) ? empty.delete(opts.key) : empty.add(opts.key); drawOld(); });
-    return b;
-  }
+  const desks = new Set();
+  for (let r = 0; r < 4; r++) for (let c = 0; c < 6; c++) desks.add(key(r, c));
+  desks.add('4:0'); // 뒤에 한 자리 더
 
-  function drawChart(el, grid, opts, flip) {
-    el.innerHTML = '';
-    const board = document.createElement('div');
-    board.className = 'board';
-    board.textContent = '칠판 · 교탁';
-    let rows = grid.map((r, ri) => ({ r, ri }));
-    if (flip) rows = rows.slice().reverse();
-    if (!flip) el.appendChild(board);
-    rows.forEach(({ r, ri }) => {
-      const row = document.createElement('div');
-      row.className = 'srow';
-      let cells = r.map((n, ci) => ({ n, ci }));
-      if (flip) cells = cells.slice().reverse();
-      for (let i = 0; i < cells.length; i += 2) {
-        const pair = document.createElement('div');
-        pair.className = 'pair';
-        pair.appendChild(seatEl(cells[i].n, { ...opts, key: opts.editable ? ri + ':' + cells[i].ci : null }));
-        pair.appendChild(seatEl(cells[i + 1].n, { ...opts, key: opts.editable ? ri + ':' + cells[i + 1].ci : null }));
-        row.appendChild(pair);
-      }
-      el.appendChild(row);
-    });
-    if (flip) el.appendChild(board);
-  }
+  const oldSeat = new Map();
+  [['김민준','이서연','박도윤','최하은','정시우','강지유'],
+   ['조서준','윤하린','장예준','임수아','한지호','오채원'],
+   ['서은우','신지안','권유준','황다은','안건우','송윤서'],
+   ['류현우','전소율','홍주원','고아린','문이안','양나은']].forEach((row, r) => row.forEach((n, c) => oldSeat.set(key(r, c), n)));
+  oldSeat.set('4:0', '배수호');
 
-  const drawOld = () => drawChart(document.getElementById('oldChart'), OLD, { editable: true }, false);
-  let teacher = false;
-  const drawNew = () => drawChart(document.getElementById('newChart'), NEW, { tag: true, from: true }, teacher);
+  let newSeat = new Map();
+  const pinned = new Set();
+  const history = [];
+  let dirty = true;
 
-  // rules
+  const deskList = () => [...desks].filter(k => { const [r, c] = rc(k); return r < R && c < cols(); })
+    .sort((a, b) => { const [ra, ca] = rc(a), [rb, cb] = rc(b); return ra - rb || ca - cb; });
+  const partnerKey = (k) => { const [r, c] = rc(k); const p = key(r, c % 2 ? c - 1 : c + 1); return desks.has(p) ? p : null; };
+  const touching = (a, b) => { const [r1, c1] = rc(a), [r2, c2] = rc(b); return a !== b && Math.floor(c1 / 2) === Math.floor(c2 / 2) && Math.abs(r1 - r2) <= 1; };
+  const dist = (a, b) => { const [r1, c1] = rc(a), [r2, c2] = rc(b); const dx = (c1 - c2) + (Math.floor(c1 / 2) - Math.floor(c2 / 2)) * 0.8; return Math.hypot(dx, r1 - r2); };
+  const posOf = (map) => { const p = {}; map.forEach((n, k) => { if (n) p[n] = k; }); return p; };
+  const label = (k) => { const [r, c] = rc(k); return (r + 1) + '줄 ' + (Math.floor(c / 2) + 1) + '분단'; };
+
+  // ---------- 조건 ----------
   let rules = [
     { said: '민준이랑 서연이 붙지 않게', a: '김민준', b: '이서연', kind: '서로 붙지 않기', must: true },
     { said: '정시우와 한지호는 되도록 멀리', a: '정시우', b: '한지호', kind: '최대한 멀리', must: false },
@@ -332,8 +327,243 @@
     { said: '안건우, 고아린 짝으로', a: '안건우', b: '고아린', kind: '짝으로 앉히기', must: false },
     { said: '하린이 칠판 글씨가 잘 안 보인대요', a: '윤하린', kind: null, must: true }
   ];
-  const KINDS = ['서로 붙지 않기', '최대한 멀리', '짝으로 앉히기', '앞 2줄 안에', '뒤 2줄 안에', '창가 쪽', '복도 쪽'];
+  const KINDS = ['서로 붙지 않기', '최대한 멀리', '짝으로 앉히기', '앞 2줄 안에', '뒤 2줄 안에', '창가 쪽(1분단)'];
+  const PAIR_KINDS = ['서로 붙지 않기', '최대한 멀리', '짝으로 앉히기'];
 
+  // 배치 하나를 평가: 조건별 지킴 여부 + 벌점
+  function evaluate(map) {
+    const pos = posOf(map), oldPos = posOf(oldSeat);
+    const items = [];
+    let pen = 0;
+    const push = (title, ok, hard, note) => { items.push({ title, ok, hard, note }); if (!ok) pen += hard ? 1000 : 10; };
+
+    rules.forEach(rule => {
+      if (!rule.kind || !GENDER[rule.a]) return;
+      const pa = pos[rule.a];
+      if (!pa) return;
+      if (PAIR_KINDS.includes(rule.kind)) {
+        const pb = pos[rule.b];
+        if (!GENDER[rule.b] || !pb) return;
+        const t = rule.a + ' · ' + rule.b + ' ';
+        if (rule.kind === '서로 붙지 않기') { const ok = !touching(pa, pb); push(t + '붙지 않기', ok, rule.must, ok ? '떨어짐' : '붙음'); }
+        if (rule.kind === '최대한 멀리') { const d = dist(pa, pb); pen += Math.max(0, 8 - d); push(t + '멀리', d >= 3, rule.must, d >= 3 ? '멀리 떨어짐' : '가까움'); }
+        if (rule.kind === '짝으로 앉히기') { const ok = partnerKey(pa) === pb; push(t + '짝', ok, rule.must, ok ? label(pa) : '짝 아님'); }
+      } else {
+        const [r, c] = rc(pa);
+        if (rule.kind === '앞 2줄 안에') push(rule.a + ' 앞 2줄', r <= 1, rule.must, (r + 1) + '줄');
+        if (rule.kind === '뒤 2줄 안에') push(rule.a + ' 뒤 2줄', r >= R - 2, rule.must, (r + 1) + '줄');
+        if (rule.kind === '창가 쪽(1분단)') push(rule.a + ' 창가 쪽', Math.floor(c / 2) === 0, rule.must, (Math.floor(c / 2) + 1) + '분단');
+      }
+    });
+
+    if (document.getElementById('tPrev').checked) {
+      const n = NAMES.filter(s => pos[s] && pos[s] === oldPos[s]).length;
+      push('지난 자리와 겹침', n === 0, true, n + '명');
+    }
+    let samePair = 0, sameGender = 0;
+    map.forEach((n, k) => {
+      const [, c] = rc(k);
+      if (!n || c % 2) return;
+      const pk = partnerKey(k), m = pk && map.get(pk);
+      if (!m) return;
+      const po = oldPos[n] && partnerKey(oldPos[n]);
+      if (po && oldSeat.get(po) === m) samePair++;
+      if (GENDER[n] === GENDER[m]) sameGender++;
+    });
+    if (document.getElementById('tPair').checked) push('지난 짝과 다시 짝', samePair === 0, true, samePair + '쌍');
+    if (document.getElementById('tMix').checked) push('남녀 짝', sameGender === 0, true, sameGender ? '같은 성별 ' + sameGender + '쌍' : '모두 섞임');
+    return { items, pen };
+  }
+
+  // 자리 뽑기: 무작위 배치 → 두 명씩 바꿔 보며 벌점이 줄면 유지 (여러 번 반복해 가장 좋은 것)
+  function generate() {
+    const list = deskList();
+    const conflict = document.getElementById('conflict');
+    if (NAMES.length > list.length) {
+      newSeat = new Map();
+      conflict.innerHTML = '<b>책상이 ' + (NAMES.length - list.length) + '개 부족해요</b><span>학생 ' + NAMES.length + '명, 책상 ' + list.length + '개입니다. 반 설정에서 책상을 더 놓아 주세요.</span>';
+      conflict.hidden = false;
+      return;
+    }
+    const pos = posOf(newSeat);
+    const fixed = new Map();
+    pinned.forEach(n => { if (pos[n] && list.includes(pos[n])) fixed.set(pos[n], n); else pinned.delete(n); });
+    const freeKeys = list.filter(k => !fixed.has(k));
+    const freeNames = NAMES.filter(n => !pinned.has(n));
+
+    let best = null, bestPen = Infinity;
+    for (let t = 0; t < 30 && bestPen > 0; t++) {
+      const shuffled = freeNames.slice().sort(() => Math.random() - 0.5);
+      const map = new Map(fixed);
+      freeKeys.forEach((k, i) => map.set(k, shuffled[i] || null));
+      let cur = evaluate(map).pen;
+      for (let s = 0; s < 700 && cur > 0; s++) {
+        const a = freeKeys[Math.floor(Math.random() * freeKeys.length)];
+        const b = freeKeys[Math.floor(Math.random() * freeKeys.length)];
+        if (a === b) continue;
+        const va = map.get(a), vb = map.get(b);
+        map.set(a, vb); map.set(b, va);
+        const p = evaluate(map).pen;
+        if (p <= cur) cur = p; else { map.set(a, va); map.set(b, vb); }
+      }
+      if (cur < bestPen) { bestPen = cur; best = map; }
+    }
+    newSeat = best;
+
+    const failed = evaluate(best).items.filter(i => i.hard && !i.ok);
+    if (failed.length) {
+      conflict.innerHTML = '<b>반드시 조건을 모두 지키는 자리를 찾지 못했어요</b>' +
+        '<span>서로 부딪히는 조건이 있는 것 같아요. 가장 가깝게 맞춘 자리를 아래에 보여 드려요. 못 지킨 조건:</span>' +
+        '<ul>' + failed.map(i => '<li>' + i.title + ' — ' + i.note + '</li>').join('') + '</ul>' +
+        '<div class="row" style="flex-wrap:wrap"><button type="button" class="btn sm" id="toRules">조건 고치기</button><span class="tiny" style="color:inherit">일부를 “되도록”으로 바꾸거나 고정을 풀면 해결될 수 있어요.</span></div>';
+      conflict.hidden = false;
+      document.getElementById('toRules').onclick = () => go('rules');
+    } else {
+      conflict.hidden = true;
+    }
+    dirty = false;
+  }
+
+  // ---------- 자리표 그리기 ----------
+  let setupMode = 'seats', teacher = false, selOld = null, selNew = null;
+
+  const lockSvg = (closed) => '<svg width="13" height="13" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><rect x="2.5" y="5.5" width="7" height="5" rx="1"' + (closed ? ' fill="currentColor"' : '') + '/><path d="' + (closed ? 'M4 5.5V4a2 2 0 0 1 4 0v1.5' : 'M4 5.5V4a2 2 0 0 1 3.9-.6') + '"/></svg>';
+
+  function drawChart(el, kind) {
+    el.innerHTML = '';
+    const flip = kind === 'new' && teacher;
+    const board = document.createElement('div');
+    board.className = 'board';
+    board.textContent = '칠판 · 교탁';
+    if (!flip) el.appendChild(board);
+    const tags = new Set(rules.flatMap(r => r.kind ? [r.a, r.b] : []));
+    const oldPos = posOf(oldSeat);
+
+    const rows = [...Array(R).keys()];
+    (flip ? rows.reverse() : rows).forEach(r => {
+      const row = document.createElement('div');
+      row.className = 'srow';
+      const cs = [...Array(cols()).keys()];
+      if (flip) cs.reverse();
+      for (let i = 0; i < cs.length; i += 2) {
+        const pair = document.createElement('div');
+        pair.className = 'pair';
+        [cs[i], cs[i + 1]].forEach(c => pair.appendChild(cell(key(r, c), kind, tags, oldPos)));
+        row.appendChild(pair);
+      }
+      el.appendChild(row);
+    });
+    if (flip) el.appendChild(board);
+  }
+
+  function cell(k, kind, tags, oldPos) {
+    const [r, c] = rc(k);
+    const where = (r + 1) + '줄 ' + (Math.floor(c / 2) + 1) + '분단 ' + (c % 2 ? '오른쪽' : '왼쪽');
+    if (kind === 'desks') {
+      const b = document.createElement('button');
+      b.type = 'button';
+      const has = desks.has(k);
+      b.className = 'seat ' + (has ? 'desk' : 'slot');
+      b.textContent = has ? '책상' : '+';
+      b.setAttribute('aria-label', where + (has ? ' 책상 빼기' : ' 책상 놓기'));
+      b.onclick = () => { has ? desks.delete(k) : desks.add(k); dirty = true; drawSetup(); };
+      return b;
+    }
+    const d = document.createElement('div');
+    if (!desks.has(k)) { d.className = 'seat none'; return d; }
+    const map = kind === 'old' ? oldSeat : newSeat;
+    const n = map.get(k);
+    const sel = kind === 'old' ? selOld : selNew;
+    d.className = 'seat' + (n ? '' : ' vacant') + (n && kind === 'new' && tags.has(n) ? ' tag' : '') + (sel === k ? ' sel' : '') + (n && pinned.has(n) && kind === 'new' ? ' pin' : '');
+    const main = document.createElement('button');
+    main.type = 'button';
+    main.className = 'main';
+    main.innerHTML = n
+      ? '<span class="g ' + GENDER[n] + '"></span><span class="n">' + n + '</span>' + (kind === 'new' && oldPos[n] ? '<span class="f">' + oldPos[n].split(':').map((v, i) => i ? Math.floor(v / 2) + 1 : +v + 1).join('-') + '</span>' : '')
+      : '<span class="n">빈 책상</span>';
+    main.setAttribute('aria-label', where + ' ' + (n || '빈 책상'));
+    main.onclick = () => pick(kind, k);
+    d.appendChild(main);
+    if (kind === 'new' && n) {
+      const lock = document.createElement('button');
+      lock.type = 'button';
+      lock.className = 'lock';
+      lock.innerHTML = lockSvg(pinned.has(n));
+      lock.setAttribute('aria-label', n + (pinned.has(n) ? ' 고정 풀기' : ' 자리 고정'));
+      lock.setAttribute('aria-pressed', pinned.has(n));
+      lock.onclick = () => { pinned.has(n) ? pinned.delete(n) : pinned.add(n); drawResult(); };
+      d.appendChild(lock);
+    }
+    return d;
+  }
+
+  function pick(kind, k) {
+    const map = kind === 'old' ? oldSeat : newSeat;
+    const sel = kind === 'old' ? selOld : selNew;
+    const hint = document.getElementById(kind === 'old' ? 'setupHint' : 'resultHint');
+    const locked = (x) => kind === 'new' && map.get(x) && pinned.has(map.get(x));
+    let next = null;
+    hint.classList.remove('warn');
+    if (locked(k) || (sel && locked(sel))) {
+      hint.textContent = '고정한 학생은 옮길 수 없어요. 자물쇠를 먼저 풀어 주세요.';
+      hint.classList.add('warn');
+    } else if (!sel) {
+      if (!map.get(k)) return;
+      next = k;
+    } else if (sel !== k) {
+      if (kind === 'new') history.push(new Map(newSeat));
+      const a = map.get(sel), b = map.get(k);
+      map.set(sel, b || null); map.set(k, a || null);
+      if (kind === 'old') dirty = true;
+    }
+    if (kind === 'old') { selOld = next; drawSetup(); } else { selNew = next; drawResult(); }
+  }
+
+  function reconcile(map) {
+    const displaced = [];
+    [...map.keys()].forEach(k => { const [r, c] = rc(k); if (!desks.has(k) || r >= R || c >= cols()) { if (map.get(k)) displaced.push(map.get(k)); map.delete(k); } });
+    deskList().forEach(k => { if (!map.get(k) && displaced.length) map.set(k, displaced.shift()); });
+  }
+
+  function drawSetup() {
+    const n = deskList().length;
+    document.getElementById('rVal').textContent = R;
+    document.getElementById('gVal').textContent = G;
+    const diff = n - NAMES.length;
+    document.getElementById('deskCount').innerHTML = '책상 ' + n + '개 · 학생 ' + NAMES.length + '명' +
+      (diff < 0 ? ' <b style="color:var(--warn)">· ' + (-diff) + '개 부족</b>' : diff > 0 ? ' · 빈 책상 ' + diff + '개' : '');
+    document.getElementById('deskTools').hidden = setupMode !== 'desks';
+    document.getElementById('setupSub').textContent = setupMode === 'desks'
+      ? '실제 교실과 같게 책상을 놓아 주세요. 뒤에 한 자리만 더 있어도 괜찮아요.'
+      : '9월 1일에 확정한 자리. 새 자리는 이것과 겹치지 않게 뽑습니다.';
+    const hint = document.getElementById('setupHint');
+    if (!hint.classList.contains('warn')) hint.textContent = setupMode === 'desks'
+      ? '빈 칸(+)을 누르면 책상이 생기고, 책상을 누르면 없어집니다.'
+      : '실제 자리와 다르면 두 자리를 차례로 누르세요. 서로 바뀝니다.';
+    if (setupMode === 'seats') reconcile(oldSeat);
+    drawChart(document.getElementById('oldChart'), setupMode === 'desks' ? 'desks' : 'old');
+  }
+
+  function drawResult() {
+    if (newSeat.size) reconcile(newSeat);
+    drawChart(document.getElementById('newChart'), 'new');
+    if (!newSeat.size) { document.getElementById('checks').innerHTML = ''; document.getElementById('checkSum').textContent = ''; return; }
+    const { items } = evaluate(newSeat);
+    if (pinned.size) items.push({ title: '고정한 학생', ok: true, note: [...pinned].join(', ') });
+    const bad = items.filter(i => !i.ok).length;
+    const sum = document.getElementById('checkSum');
+    sum.textContent = bad ? bad + '개 못 지킴' : '모두 지킴';
+    sum.style.color = bad ? 'var(--warn)' : 'var(--accent)';
+    const ok = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#2E6B5E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5l3.2 3L14 5.5"/></svg>';
+    const warn = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#A0620F" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="9" cy="9" r="6.5"/><path d="M9 5.5v4M9 12.3v.1"/></svg>';
+    document.getElementById('checks').innerHTML = items.map(i =>
+      '<div class="check' + (i.ok ? '' : ' bad') + '">' + (i.ok ? ok : warn) + '<span class="t">' + i.title +
+      (i.hard === false ? ' <span class="tiny">(되도록)</span>' : '') + '</span><span class="tiny">' + i.note + '</span></div>').join('');
+    document.getElementById('undo').disabled = !history.length;
+    document.getElementById('regen').textContent = pinned.size ? '고정 빼고 다시 뽑기' : '다시 뽑기';
+  }
+
+  // ---------- 조건 목록 ----------
   function drawRules() {
     const list = document.getElementById('ruleList');
     list.innerHTML = '';
@@ -358,6 +588,7 @@
       list.appendChild(d);
     });
     document.getElementById('ruleCount').textContent = rules.length;
+    dirty = true;
   }
 
   document.getElementById('ruleForm').addEventListener('submit', (e) => {
@@ -365,53 +596,62 @@
     const inp = document.getElementById('ruleInput');
     const text = inp.value.trim();
     if (!text) return;
-    const found = Object.keys(G).filter(n => text.includes(n) || text.includes(n.slice(1)));
+    const found = NAMES.filter(n => text.includes(n) || text.includes(n.slice(1)));
     let kind = null;
     if (/붙지|떨어/.test(text)) kind = '서로 붙지 않기';
     else if (/멀리/.test(text)) kind = '최대한 멀리';
     else if (/짝|같이/.test(text)) kind = '짝으로 앉히기';
     else if (/앞줄|앞자리|앞에/.test(text)) kind = '앞 2줄 안에';
     else if (/뒷줄|뒷자리|뒤에/.test(text)) kind = '뒤 2줄 안에';
-    else if (/창가/.test(text)) kind = '창가 쪽';
-    rules.push({ said: text, a: found[0] || '(이름 확인 필요)', b: found[1], kind, must: !/되도록|가능하면/.test(text) });
+    else if (/창가/.test(text)) kind = '창가 쪽(1분단)';
+    if (kind && PAIR_KINDS.includes(kind) && found.length < 2) kind = null;
+    rules.push({ said: text, a: found[0] || '(이름 확인 필요)', b: PAIR_KINDS.includes(kind) ? found[1] : undefined, kind, must: !/되도록|가능하면/.test(text) });
     inp.value = '';
     drawRules();
   });
 
-  const CHECKS = [
-    ['김민준 · 이서연 붙지 않기', '반드시'],
-    ['정시우 · 한지호 멀리', '가장 먼 자리'],
-    ['박도윤 앞 2줄', '1줄'],
-    ['안건우 · 고아린 짝', '3줄 2분단'],
-    ['지난 자리와 겹침', '0명'],
-    ['지난 짝과 다시 짝', '0쌍'],
-    ['남녀 짝', '12쌍 모두']
-  ];
-  document.getElementById('checks').innerHTML = CHECKS.map(([t, n]) =>
-    '<div class="check"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#2E6B5E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5l3.2 3L14 5.5"/></svg><span>' + t + '</span><span class="tiny">' + n + '</span></div>'
-  ).join('');
-
-  // navigation
+  // ---------- 화면 전환과 버튼 ----------
   function go(id) {
     ['setup', 'rules', 'result'].forEach(v => { document.getElementById(v).hidden = v !== id; });
     document.querySelectorAll('nav button').forEach(b => b.setAttribute('aria-current', b.dataset.go === id));
+    if (id === 'result') {
+      if (dirty || !newSeat.size) { history.length = 0; generate(); }
+      drawResult();
+    }
+    if (id === 'setup') drawSetup();
     window.scrollTo(0, 0);
   }
-  document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => {
-    if (b.closest('#conflict')) document.getElementById('conflict').hidden = true;
-    go(b.dataset.go);
+  document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => go(b.dataset.go)));
+  document.getElementById('drawBtn').onclick = () => { dirty = true; go('result'); };
+  document.querySelectorAll('#tPrev, #tPair, #tMix').forEach(t => t.onchange = () => { dirty = true; });
+
+  document.querySelectorAll('[data-mode]').forEach(b => b.addEventListener('click', () => {
+    setupMode = b.dataset.mode;
+    selOld = null;
+    document.getElementById('setupHint').classList.remove('warn');
+    document.querySelectorAll('[data-mode]').forEach(x => x.setAttribute('aria-pressed', x === b));
+    drawSetup();
   }));
+  document.querySelectorAll('[data-step]').forEach(b => b.addEventListener('click', () => {
+    const [which, delta] = b.dataset.step.split(':');
+    if (which === 'R') R = Math.min(8, Math.max(1, R + +delta));
+    else G = Math.min(5, Math.max(1, G + +delta));
+    [...desks].forEach(k => { const [r, c] = rc(k); if (r >= R || c >= cols()) desks.delete(k); });
+    dirty = true;
+    drawSetup();
+  }));
+
   document.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => {
     teacher = b.dataset.view === 'teacher';
     document.querySelectorAll('[data-view]').forEach(x => x.setAttribute('aria-pressed', x === b));
-    drawNew();
+    drawResult();
   }));
-  document.getElementById('demoConflict').addEventListener('click', () => {
-    document.getElementById('conflict').hidden = false;
-    go('result');
-  });
+  document.getElementById('regen').onclick = () => { history.push(new Map(newSeat)); selNew = null; generate(); drawResult(); };
+  document.getElementById('undo').onclick = () => { if (history.length) { newSeat = history.pop(); selNew = null; drawResult(); } };
+  document.getElementById('confirmBtn').onclick = () => { document.getElementById('confirmNote').textContent = '목업이라 실제로 저장되지는 않아요.'; };
 
-  drawOld(); drawRules(); drawNew();
+  drawRules();
+  drawSetup();
 </script>
 </body>
 </html>
