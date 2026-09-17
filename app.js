@@ -313,7 +313,49 @@ function drawChart(el, kind) {
     el.appendChild(row);
   });
   if (flip) el.appendChild(boardRow);
+  fitChart(el, kind === 'show');
 }
+
+// 분단·줄 수에 맞춰 자리 크기를 줄여 한 화면(또는 인쇄 한 장)에 들어가게 한다.
+function fitChart(el, big, pageWidth) {
+  const G = S.layout.G, R = S.layout.R;
+  const box = el.parentElement;
+  const availW = pageWidth || (box.clientWidth - (big ? 64 : 8));
+  const maxW = big ? 170 : 104, minW = big ? 60 : 50;
+  const pg = big ? 8 : 6;
+  const gapFor = (w) => Math.min(big ? 48 : 32, Math.max(10, Math.round(w * 0.3)));
+  let w = maxW;
+  if (availW > 0) {
+    for (let i = 0; i < 3; i++) w = Math.floor((availW - G * pg - (G - 1) * gapFor(w)) / (2 * G));
+  }
+  if (big && !pageWidth) {
+    // 크게 보기는 세로도 화면 안에 들어가게
+    const availH = window.innerHeight - 150;
+    const rowH = Math.floor(availH / R);
+    w = Math.min(w, Math.floor(rowH / 0.8));
+  }
+  w = Math.max(minW, Math.min(maxW, w));
+  const compact = !big && w < 76; // 좁을 때는 지난 자리 표시를 숨기고 자물쇠를 아래로
+  el.classList.toggle('compact', compact);
+  const h = Math.max(big ? 48 : compact ? 50 : 42, Math.round(w * (big ? 0.56 : 0.54)));
+  const set = (k, v) => el.style.setProperty(k, v + 'px');
+  set('--w', w);
+  set('--h', h);
+  set('--gap', gapFor(w));
+  set('--pg', pg);
+  set('--rg', Math.max(8, Math.round(h * (big ? 0.24 : 0.25))));
+  set('--fs', big ? Math.max(14, Math.min(26, Math.round(w * 0.16))) : Math.max(12, Math.min(14, Math.round(w * 0.135))));
+}
+
+let resizeTimer = null;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    ['oldChart', 'newChart'].forEach((id) => { if ($(id).children.length) fitChart($(id), false); });
+    if (!$('present').hidden) fitChart($('presentChart'), true);
+  }, 100);
+});
+window.addEventListener('beforeprint', () => fitChart($('presentChart'), true, 1000));
 
 function cell(k, kind, g, tags, oldPos) {
   const [r, c] = rc(k);
@@ -351,6 +393,7 @@ function cell(k, kind, g, tags, oldPos) {
   main.className = 'main';
   main.innerHTML = inner;
   main.setAttribute('aria-label', where + ' ' + (n || '빈 책상'));
+  if (isNew && n && oldPos[n]) main.title = n + ' · 지난 자리 ' + longPos(oldPos[n]);
   main.onclick = () => pick(kind, k);
   d.appendChild(main);
   if (isNew && n) {
@@ -675,15 +718,15 @@ function resetConfirm() {
 // 크게 보기 · 인쇄
 function openPresent() {
   $('presentTitle').textContent = (S.className || '우리 반') + ' 자리표' + (S.draft.date ? ' · ' + koDate(S.draft.date) : '');
-  drawChart($('presentChart'), 'show');
   $('present').hidden = false;
+  drawChart($('presentChart'), 'show');
 }
 $('bigBtn').onclick = openPresent;
 $('printBtn').onclick = () => { openPresent(); printAndClose = true; window.print(); };
 $('presentPrint').onclick = () => window.print();
 $('presentClose').onclick = () => { $('present').hidden = true; };
 let printAndClose = false;
-window.addEventListener('afterprint', () => { if (printAndClose) { printAndClose = false; $('present').hidden = true; } });
+window.addEventListener('afterprint', () => { if (printAndClose) { printAndClose = false; $('present').hidden = true; } else fitChart($('presentChart'), true); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('present').hidden) $('present').hidden = true; });
 
 // ---------- 화면 전환 ----------
