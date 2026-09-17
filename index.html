@@ -1,5 +1,179 @@
 <!doctype html>
+<html lang="ko">
+<head>
 <meta charset="utf-8">
-<meta http-equiv="refresh" content="0; url=mockup.html">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>자리 바꾸기</title>
-<a href="mockup.html">목업 보기</a>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div class="brand"><b>자리 바꾸기</b><span id="brandSub"></span></div>
+  <nav aria-label="단계">
+    <button type="button" data-go="setup" aria-current="true">1 반 설정</button>
+    <button type="button" data-go="rules">2 조건</button>
+    <button type="button" data-go="result">3 결과</button>
+  </nav>
+</header>
+
+<main>
+  <!-- 1. 반 설정 -->
+  <section class="view" id="setup">
+    <div class="side">
+      <div class="card pad stack">
+        <h3><label for="className">반 이름</label></h3>
+        <input type="text" id="className" placeholder="예: 3학년 2반" maxlength="30">
+      </div>
+
+      <div class="card pad stack">
+        <div class="between"><h3><label for="roster">학생 명단</label></h3><span class="tiny" id="rosterSum"></span></div>
+        <textarea id="roster" rows="14" placeholder="김민준 남&#10;이서연 여&#10;박도윤 남&#10;…"></textarea>
+        <p class="tiny warn-text" id="rosterWarn" hidden></p>
+        <p class="tiny">한 줄에 “이름 남/여”. 엑셀에서 번호·이름·성별 열을 복사해 붙여넣어도 됩니다.</p>
+      </div>
+
+      <div class="card pad stack">
+        <h3>데이터</h3>
+        <p class="tiny">명단과 자리는 이 컴퓨터의 브라우저에만 저장됩니다. 다른 컴퓨터에서 쓰려면 백업 파일로 옮기세요.</p>
+        <div class="row" style="flex-wrap:wrap">
+          <button type="button" class="btn sm" id="exportBtn">백업 파일 저장</button>
+          <button type="button" class="btn sm" id="importBtn">백업 불러오기</button>
+          <input type="file" id="importFile" accept="application/json,.json" hidden>
+        </div>
+        <button type="button" class="linkbtn" id="resetBtn" style="align-self:flex-start;color:var(--warn)">모두 지우기</button>
+        <p class="tiny" id="dataMsg" hidden></p>
+      </div>
+    </div>
+
+    <div class="grow">
+      <div class="card pad" style="display:flex;flex-direction:column;gap:16px">
+        <div class="between">
+          <div><h2>교실</h2><p class="sub" id="setupSub"></p></div>
+          <div class="seg" role="group" aria-label="보기">
+            <button type="button" data-mode="seats" aria-pressed="true">지금 자리</button>
+            <button type="button" data-mode="desks" aria-pressed="false">책상 배치 바꾸기</button>
+          </div>
+        </div>
+
+        <div class="toolbar" id="deskTools" hidden>
+          <span class="row"><span class="lbl">줄</span><span class="stepper"><button type="button" aria-label="줄 빼기" data-step="R:-1">−</button><span id="rVal"></span><button type="button" aria-label="줄 추가" data-step="R:1">+</button></span></span>
+          <span class="row"><span class="lbl">분단</span><span class="stepper"><button type="button" aria-label="분단 빼기" data-step="G:-1">−</button><span id="gVal"></span><button type="button" aria-label="분단 추가" data-step="G:1">+</button></span></span>
+          <span class="row"><span class="lbl">창문</span><span class="seg" role="group" aria-label="창문 방향"><button type="button" data-window="left">왼쪽</button><button type="button" data-window="right">오른쪽</button></span></span>
+          <span class="tiny" id="deskCount" style="margin-left:auto"></span>
+        </div>
+
+        <div class="chart-wrap"><div class="chart" id="oldChart"></div></div>
+        <div class="hint" id="setupHint"></div>
+        <div class="legend"><span><i style="background:var(--boy)"></i>남</span><span><i style="background:var(--girl)"></i>여</span><span>학생 쪽에서 칠판을 바라본 모습</span></div>
+      </div>
+      <div style="display:flex;justify-content:flex-end"><button type="button" class="btn primary" data-go="rules">다음: 조건 입력</button></div>
+    </div>
+  </section>
+
+  <!-- 2. 조건 -->
+  <section class="view" id="rules" hidden>
+    <div class="grow">
+      <div class="stack" style="gap:10px">
+        <h2><label for="ruleInput">조건을 문장으로 적어 주세요</label></h2>
+        <form class="row" id="ruleForm">
+          <input type="text" id="ruleInput" placeholder="예: 민준이랑 서연이 붙지 않게" style="height:48px;border-radius:10px;font-size:15px" autocomplete="off">
+          <button class="btn dark" style="height:48px;width:88px;flex-shrink:0">추가</button>
+        </form>
+        <div class="row" style="flex-wrap:wrap;gap:6px">
+          <span class="tiny">이렇게 쓸 수 있어요</span>
+          <span class="pill">A와 B 붙지 않게</span><span class="pill">A와 B 되도록 멀리</span>
+          <span class="pill">A와 B 짝으로</span><span class="pill">A는 앞줄에</span><span class="pill">A는 창가 쪽</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="between" style="padding:14px 20px;border-bottom:1px solid var(--line)">
+          <span class="tiny">입력한 조건 <b id="ruleCount">0</b>개</span>
+          <span class="tiny">“민준이”처럼 써도 명단의 김민준으로 맞춥니다</span>
+        </div>
+        <div id="ruleList"></div>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="card pad">
+        <h3 style="margin-bottom:6px">기본 규칙</h3>
+        <label class="toggle"><span class="t"><span>지난 자리 피하기</span><span class="tiny">같은 자리에 다시 앉지 않게</span></span><input type="checkbox" id="tPrev"><span class="sw"></span></label>
+        <label class="toggle"><span class="t"><span>지난 짝 피하기</span><span class="tiny">같은 짝과 다시 앉지 않게</span></span><input type="checkbox" id="tPair"><span class="sw"></span></label>
+        <label class="toggle"><span class="t"><span>남녀 짝</span><span class="tiny">짝은 남학생 1명 + 여학생 1명</span></span><input type="checkbox" id="tMix"><span class="sw"></span></label>
+      </div>
+
+      <div class="card pad stack" style="gap:10px">
+        <h3>“붙지 않게”의 범위</h3>
+        <div class="scope">
+          <div class="mini" aria-hidden="true"><i class="no"></i><i class="no"></i><i></i><i class="no"></i><i class="me"></i><i></i><i class="no"></i><i class="no"></i><i></i></div>
+          <p class="tiny">짝 · 앞뒤 · 대각선까지 붙은 것으로 봅니다. 통로 건너 옆 분단은 붙은 것이 아닙니다.</p>
+        </div>
+      </div>
+
+      <div class="note"><b>반드시</b>는 절대 어기지 않고, <b>되도록</b>은 가능한 한 지킵니다. 반드시 조건끼리 부딪히면 어떤 조건 때문인지 알려 드려요.</div>
+
+      <button type="button" class="btn primary block" id="drawBtn">자리 뽑기</button>
+    </div>
+  </section>
+
+  <!-- 3. 결과 -->
+  <section class="view" id="result" hidden>
+    <div class="grow">
+      <div class="conflict" id="conflict" hidden></div>
+
+      <div class="card pad" style="display:flex;flex-direction:column;gap:16px">
+        <div class="between">
+          <div><h2>새 자리</h2><p class="sub" id="resultSub"></p></div>
+          <div class="seg" role="group" aria-label="보는 방향">
+            <button type="button" aria-pressed="true" data-view="student">학생 시점</button>
+            <button type="button" aria-pressed="false" data-view="teacher">교사 시점</button>
+          </div>
+        </div>
+        <div class="chart-wrap"><div class="chart" id="newChart"></div></div>
+        <div class="hint" id="resultHint"></div>
+        <div class="legend">
+          <span><i style="background:var(--boy)"></i>남</span><span><i style="background:var(--girl)"></i>여</span>
+          <span><i class="sq" style="background:var(--accent-soft);border:1px solid var(--accent-line)"></i>조건이 걸린 학생</span>
+          <span><i class="sq" style="border:1.5px solid var(--ink)"></i>고정한 학생</span>
+          <span>작은 글씨 = 지난 자리 (줄-분단)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="card pad">
+        <div class="between" style="margin-bottom:6px"><h3>조건 확인</h3><span id="checkSum" style="font-size:13px;font-weight:500"></span></div>
+        <div id="checks"></div>
+      </div>
+      <div class="row">
+        <button type="button" class="btn" style="flex:1" id="regen">다시 뽑기</button>
+        <button type="button" class="btn" style="flex:1" id="undo">되돌리기</button>
+      </div>
+      <div class="row">
+        <button type="button" class="btn" style="flex:1" id="bigBtn">크게 보기</button>
+        <button type="button" class="btn" style="flex:1" id="printBtn">인쇄</button>
+      </div>
+      <button type="button" class="btn primary block" id="confirmBtn">이 자리로 확정</button>
+      <p class="tiny" style="text-align:center" id="confirmNote">확정하면 다음번 ‘지난 자리’로 저장됩니다.</p>
+    </div>
+  </section>
+</main>
+
+<div id="present" hidden>
+  <div class="top">
+    <h1 id="presentTitle"></h1>
+    <div class="row tools">
+      <button type="button" class="btn sm" id="presentPrint">인쇄</button>
+      <button type="button" class="btn sm dark" id="presentClose">닫기</button>
+    </div>
+  </div>
+  <div class="chart" id="presentChart"></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
