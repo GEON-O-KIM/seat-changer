@@ -141,6 +141,7 @@ input[type=text]:focus, textarea:focus, select:focus { outline: 2px solid var(--
 .mini i { width: 18px; height: 18px; border-radius: 3px; background: var(--sunk); }
 .mini i.me { background: var(--ink); }
 .mini i.no { background: var(--accent-line); }
+.mini i.aisle { margin-left: 6px; }
 
 .conflict { border: 1px solid var(--warn-line); background: var(--warn-soft); border-radius: 12px; padding: 18px 20px; color: var(--warn-ink); display: flex; flex-direction: column; gap: 8px; }
 .conflict ul { margin: 0; padding-left: 18px; line-height: 1.8; }

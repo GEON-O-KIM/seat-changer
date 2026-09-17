@@ -54,7 +54,13 @@ function syncDesks() {
 
 const deskList = () => [...DESKS].sort((a, b) => { const [ra, ca] = rc(a), [rb, cb] = rc(b); return ra - rb || ca - cb; });
 const partnerKey = (k) => { const [r, c] = rc(k); const p = key(r, c % 2 ? c - 1 : c + 1); return DESKS.has(p) ? p : null; };
-const touching = (a, b) => { const [r1, c1] = rc(a), [r2, c2] = rc(b); return a !== b && group(c1) === group(c2) && Math.abs(r1 - r2) <= 1; };
+// 붙어 있음 = 같은 분단의 짝·앞뒤·대각선 + 통로 건너 바로 옆자리(같은 줄)
+const touching = (a, b) => {
+  const [r1, c1] = rc(a), [r2, c2] = rc(b);
+  if (a === b) return false;
+  if (group(c1) === group(c2)) return Math.abs(r1 - r2) <= 1;
+  return r1 === r2 && Math.abs(c1 - c2) === 1;
+};
 const dist = (a, b) => { const [r1, c1] = rc(a), [r2, c2] = rc(b); return Math.hypot((c1 - c2) + (group(c1) - group(c2)) * 0.8, r1 - r2); };
 const windowGroup = () => (S.layout.window === 'left' ? 0 : S.layout.G - 1);
 const hallGroup = () => (S.layout.window === 'left' ? S.layout.G - 1 : 0);
