@@ -341,8 +341,9 @@ function fitChart(el, big, pageWidth) {
   h = Math.max(minH, Math.min(maxH, h));
   const rg = Math.max(6, Math.round(h * 0.22));
 
-  const compact = !big && (w < 76 || h < 48); // 작을 때는 지난 자리 표시를 숨기고 자물쇠를 아래로
-  el.classList.toggle('compact', compact);
+  // 좁으면 자물쇠를 오른쪽 아래로, 더 작으면 지난 자리 표시도 숨긴다
+  el.classList.toggle('lock-low', !big && w < 96);
+  el.classList.toggle('compact', !big && (w < 60 || h < 48));
   const set = (k, v) => el.style.setProperty(k, v + 'px');
   set('--w', w);
   set('--h', h);

@@ -90,9 +90,9 @@ input[type=text]:focus, textarea:focus, select:focus { outline: 2px solid var(--
 .lock:hover { opacity: 1; background: rgba(0,0,0,.05); }
 .seat.pin .lock { opacity: 1; color: var(--ink); }
 .compact .seat .f { display: none; }
-.compact .lock { top: auto; bottom: 0; right: 0; width: 20px; height: 20px; }
+.lock-low .lock { top: auto; bottom: 0; right: 0; width: 22px; height: 22px; }
+.lock-low .lock svg { width: 11px; height: 11px; }
 .compact .seat .g { top: 5px; left: 6px; }
-.compact .lock svg { width: 11px; height: 11px; }
 .seat.desk { background: #EFEBE2; border-color: #CFC9BC; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 12px; padding: 0; }
 .seat.slot { background: none; border: 1px dashed var(--line); color: #B3B0A8; font-size: 18px; padding: 0; }
 .seat.slot:hover { border-color: var(--accent); color: var(--accent); }
