@@ -321,30 +321,35 @@ function fitChart(el, big, pageWidth) {
   const G = S.layout.G, R = S.layout.R;
   const box = el.parentElement;
   const availW = pageWidth || (box.clientWidth - (big ? 64 : 8));
-  const maxW = big ? 170 : 104, minW = big ? 60 : 50;
+  const maxW = big ? 170 : 104, minW = big ? 60 : 44;
   const pg = big ? 8 : 6;
   const gapFor = (w) => Math.min(big ? 48 : 32, Math.max(10, Math.round(w * 0.3)));
   let w = maxW;
   if (availW > 0) {
     for (let i = 0; i < 3; i++) w = Math.floor((availW - G * pg - (G - 1) * gapFor(w)) / (2 * G));
   }
-  if (big && !pageWidth) {
-    // 크게 보기는 세로도 화면 안에 들어가게
-    const availH = window.innerHeight - 150;
-    const rowH = Math.floor(availH / R);
-    w = Math.min(w, Math.floor(rowH / 0.8));
-  }
   w = Math.max(minW, Math.min(maxW, w));
-  const compact = !big && w < 76; // 좁을 때는 지난 자리 표시를 숨기고 자물쇠를 아래로
+
+  // 세로: 칠판부터 마지막 줄까지 창 높이 안에 들어가게 (아래 안내·범례 자리 남김)
+  const boardH = big ? 40 : 30;
+  let availH;
+  if (pageWidth) availH = 640;
+  else if (big) availH = window.innerHeight - 130;
+  else availH = window.innerHeight - (el.getBoundingClientRect().top + window.scrollY) - 90;
+  const maxH = big ? Math.round(w * 0.56) : 56, minH = big ? 44 : 36;
+  let h = Math.floor((Math.max(availH, 200) - boardH) / R / 1.22);
+  h = Math.max(minH, Math.min(maxH, h));
+  const rg = Math.max(6, Math.round(h * 0.22));
+
+  const compact = !big && (w < 76 || h < 48); // 작을 때는 지난 자리 표시를 숨기고 자물쇠를 아래로
   el.classList.toggle('compact', compact);
-  const h = Math.max(big ? 48 : compact ? 50 : 42, Math.round(w * (big ? 0.56 : 0.54)));
   const set = (k, v) => el.style.setProperty(k, v + 'px');
   set('--w', w);
   set('--h', h);
   set('--gap', gapFor(w));
   set('--pg', pg);
-  set('--rg', Math.max(8, Math.round(h * (big ? 0.24 : 0.25))));
-  set('--fs', big ? Math.max(14, Math.min(26, Math.round(w * 0.16))) : Math.max(12, Math.min(14, Math.round(w * 0.135))));
+  set('--rg', rg);
+  set('--fs', big ? Math.max(14, Math.min(26, Math.round(Math.min(w * 0.16, h * 0.4)))) : (w >= 90 && h >= 50 ? 14 : 12));
 }
 
 let resizeTimer = null;
