@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>자리 바꾸기 · 목업</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F6F5F1; --surface: #FFFFFF; --sunk: #ECEAE4; --line: #E4E2DB; --line-soft: #EFEDE7;
+    --ink: #1C1F23; --muted: #5F6368;
+    --accent: #2E6B5E; --accent-ink: #1F4D43; --accent-soft: #E6EFEC; --accent-line: #9CC0B6;
+    --warn-soft: #F6EEDF; --warn-ink: #6E4210; --warn-line: #E2C79A;
+    --boy: #4A6FA5; --girl: #B0587A;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 14px/1.5 "IBM Plex Sans KR", "Apple SD Gothic Neo", system-ui, sans-serif; }
+  button, input, textarea, select { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+
+  .mock { background: var(--sunk); color: var(--muted); font-size: 12px; text-align: center; padding: 6px 16px; }
+  .mock button { border: 0; background: none; color: var(--accent); text-decoration: underline; padding: 0 4px; font-size: 12px; }
+
+  header { background: var(--surface); border-bottom: 1px solid var(--line); padding: 0 32px; min-height: 64px; display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: center; justify-content: space-between; }
+  .brand { display: flex; gap: 10px; align-items: baseline; }
+  .brand b { font-size: 17px; font-weight: 600; }
+  .brand span { color: var(--muted); font-size: 13px; }
+  nav { display: flex; gap: 4px; }
+  nav button { border: 0; background: none; color: var(--muted); padding: 8px 14px; border-radius: 6px; }
+  nav button[aria-current="true"] { background: var(--ink); color: #fff; }
+
+  main { max-width: 1240px; margin: 0 auto; padding: 28px 32px 48px; }
+  .view { display: flex; gap: 28px; align-items: flex-start; }
+  .side { width: 340px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; }
+  .grow { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+  @media (max-width: 900px) { .view { flex-direction: column; } .side { width: 100%; } main { padding: 20px 16px 40px; } header { padding: 10px 16px; } }
+
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+  .pad { padding: 20px; }
+  h2 { font-size: 18px; font-weight: 600; margin: 0; }
+  h3 { font-size: 14px; font-weight: 600; margin: 0; }
+  .sub { color: var(--muted); font-size: 13px; margin: 2px 0 0; }
+  .tiny { color: var(--muted); font-size: 12px; }
+  .row { display: flex; gap: 8px; align-items: center; }
+  .between { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+  textarea, input[type=text], input[type=number], select { width: 100%; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: 10px 12px; }
+  textarea { resize: vertical; line-height: 1.7; }
+  label.field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); flex: 1; }
+
+  .btn { height: 44px; padding: 0 18px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  .btn.dark { background: var(--ink); border-color: var(--ink); color: #fff; font-weight: 600; }
+  .btn.block { width: 100%; height: 52px; font-size: 15px; }
+
+  .seg { display: inline-flex; gap: 2px; padding: 3px; background: var(--sunk); border-radius: 8px; }
+  .seg button { border: 0; background: none; color: var(--muted); height: 30px; padding: 0 12px; border-radius: 6px; font-size: 12px; }
+  .seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+
+  .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; background: var(--sunk); font-size: 12px; color: var(--muted); }
+  .name { display: inline-block; padding: 2px 10px; border-radius: 6px; background: var(--accent-soft); color: var(--accent-ink); font-weight: 500; }
+
+  /* seat chart */
+  .chart-wrap { overflow-x: auto; padding: 4px 0; }
+  .chart { display: flex; flex-direction: column; gap: 14px; align-items: center; min-width: max-content; margin: 0 auto; }
+  .board { width: 240px; height: 30px; border-radius: 6px; background: var(--sunk); color: var(--muted); font-size: 12px; display: flex; align-items: center; justify-content: center; }
+  .srow { display: flex; gap: 32px; }
+  .pair { display: flex; gap: 6px; }
+  .seat { width: 104px; height: 56px; border-radius: 8px; border: 1px solid var(--line); background: #FAFAF8; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; position: relative; padding: 0; }
+  .seat .n { font-size: 14px; }
+  .seat .f { font-size: 11px; color: var(--muted); }
+  .seat .g { position: absolute; top: 6px; left: 7px; width: 6px; height: 6px; border-radius: 50%; }
+  .seat .g.m { background: var(--boy); } .seat .g.w { background: var(--girl); }
+  .seat.tag { background: var(--accent-soft); border-color: var(--accent-line); }
+  .seat.empty { background: repeating-linear-gradient(135deg, transparent 0 6px, var(--line-soft) 6px 8px); border-style: dashed; color: var(--muted); }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; font-size: 12px; color: var(--muted); }
+  .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+
+  /* rules */
+  .rule { padding: 16px 20px; border-top: 1px solid var(--line-soft); display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  .rule:first-child { border-top: 0; }
+  .rule .body { flex: 1; min-width: 240px; display: flex; flex-direction: column; gap: 6px; }
+  .rule .said { color: var(--muted); font-size: 13px; }
+  .rule.fix { background: var(--warn-soft); }
+  .rule.fix .said { color: var(--warn-ink); }
+  .rule select { width: auto; padding: 6px 10px; border-color: var(--warn-line); }
+  .x { width: 36px; height: 36px; border: 0; background: none; color: var(--muted); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+  .x:hover { background: var(--sunk); }
+
+  .toggle { display: flex; align-items: center; gap: 12px; min-height: 56px; border-top: 1px solid var(--line-soft); cursor: pointer; }
+  .toggle:first-of-type { border-top: 0; }
+  .toggle .t { flex: 1; display: flex; flex-direction: column; }
+  .toggle input { position: absolute; opacity: 0; pointer-events: none; }
+  .sw { flex-shrink: 0; width: 40px; height: 24px; border-radius: 999px; background: #D6D3CB; position: relative; transition: background .15s; }
+  .sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: left .15s; }
+  .toggle input:checked + .sw { background: var(--accent); }
+  .toggle input:checked + .sw::after { left: 19px; }
+  .toggle input:focus-visible + .sw { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .note { padding: 14px 16px; border-radius: 10px; background: var(--warn-soft); color: var(--warn-ink); font-size: 13px; line-height: 1.6; }
+
+  .check { display: flex; gap: 10px; align-items: center; min-height: 46px; border-top: 1px solid var(--line-soft); font-size: 13px; }
+  .check:first-of-type { border-top: 0; }
+  .check span:nth-child(2) { flex: 1; }
+  .check .tiny { text-align: right; }
+
+  .scope { display: flex; gap: 14px; align-items: center; }
+  .mini { display: grid; grid-template-columns: repeat(3, 18px); gap: 3px; }
+  .mini i { width: 18px; height: 18px; border-radius: 3px; background: var(--sunk); }
+  .mini i.me { background: var(--ink); }
+  .mini i.no { background: var(--accent-line); }
+
+  .conflict { border: 1px solid var(--warn-line); background: var(--warn-soft); border-radius: 12px; padding: 20px; color: var(--warn-ink); display: flex; flex-direction: column; gap: 10px; }
+  .conflict ul { margin: 0; padding-left: 18px; line-height: 1.8; }
+</style>
+</head>
+<body>
+
+<div class="mock">목업입니다 — 버튼 일부만 동작하고 저장되지 않습니다. 이름은 모두 예시입니다.
+  <button type="button" id="demoConflict">조건이 불가능할 때 화면 보기</button></div>
+
+<header>
+  <div class="brand"><b>자리 바꾸기</b><span>우리 반 · 24명</span></div>
+  <nav aria-label="단계">
+    <button type="button" data-go="setup" aria-current="true">1 반 설정</button>
+    <button type="button" data-go="rules">2 조건</button>
+    <button type="button" data-go="result">3 결과</button>
+  </nav>
+</header>
+
+<main>
+  <!-- 1. 반 설정 -->
+  <section class="view" id="setup">
+    <div class="side">
+      <div class="card pad" style="display:flex;flex-direction:column;gap:8px">
+        <div class="between"><h3><label for="roster">학생 명단</label></h3><span class="tiny">남 12 · 여 12</span></div>
+        <textarea id="roster" rows="12">김민준 남
+이서연 여
+박도윤 남
+최하은 여
+정시우 남
+강지유 여
+조서준 남
+윤하린 여
+…</textarea>
+        <p class="tiny" style="margin:0">한 줄에 “이름 남/여”. 엑셀에서 이름·성별 두 열을 복사해 붙여넣어도 됩니다.</p>
+      </div>
+
+      <div class="card pad" style="display:flex;flex-direction:column;gap:12px">
+        <h3>교실 크기 <span class="tiny" style="font-weight:400">· 2인 짝 책상</span></h3>
+        <div class="row">
+          <label class="field">줄 (앞→뒤)<input type="number" value="4" min="1" max="8"></label>
+          <label class="field">분단<input type="number" value="3" min="1" max="5"></label>
+        </div>
+        <p class="tiny" style="margin:0">자리를 누르면 빈자리(사용 안 함)로 바뀝니다. 학생 수가 홀수면 한 자리를 비워 두세요.</p>
+      </div>
+    </div>
+
+    <div class="grow">
+      <div class="card pad" style="display:flex;flex-direction:column;gap:18px">
+        <div class="between">
+          <div><h2>지금 자리</h2><p class="sub">9월 1일에 확정한 자리. 새 자리는 이것과 겹치지 않게 뽑습니다.</p></div>
+          <button type="button" class="btn">직접 수정</button>
+        </div>
+        <div class="chart-wrap"><div class="chart" id="oldChart"></div></div>
+        <div class="legend"><span><i style="background:var(--boy)"></i>남</span><span><i style="background:var(--girl)"></i>여</span></div>
+      </div>
+      <div style="display:flex;justify-content:flex-end"><button type="button" class="btn primary" data-go="rules">다음: 조건 입력</button></div>
+    </div>
+  </section>
+
+  <!-- 2. 조건 -->
+  <section class="view" id="rules" hidden>
+    <div class="grow">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <h2><label for="ruleInput">조건을 문장으로 적어 주세요</label></h2>
+        <form class="row" id="ruleForm">
+          <input type="text" id="ruleInput" placeholder="예: 민준이랑 서연이 붙지 않게" style="height:48px;border-radius:10px;font-size:15px">
+          <button class="btn dark" style="height:48px;width:88px">추가</button>
+        </form>
+        <div class="row" style="flex-wrap:wrap;gap:6px">
+          <span class="tiny">이렇게 쓸 수 있어요</span>
+          <span class="pill">A와 B 붙지 않게</span><span class="pill">A와 B 되도록 멀리</span>
+          <span class="pill">A와 B 짝으로</span><span class="pill">A는 앞줄에</span><span class="pill">A는 창가 쪽</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="between" style="padding:14px 20px;border-bottom:1px solid var(--line)">
+          <span class="tiny">입력한 조건 <b id="ruleCount">5</b>개</span>
+          <span class="tiny">“민준이”처럼 써도 명단의 김민준으로 맞춥니다</span>
+        </div>
+        <div id="ruleList"></div>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="card pad">
+        <h3 style="margin-bottom:6px">기본 규칙</h3>
+        <label class="toggle"><span class="t"><span>지난 자리 피하기</span><span class="tiny">같은 자리에 다시 앉지 않게</span></span><input type="checkbox" checked><span class="sw"></span></label>
+        <label class="toggle"><span class="t"><span>지난 짝 피하기</span><span class="tiny">같은 짝과 다시 앉지 않게</span></span><input type="checkbox" checked><span class="sw"></span></label>
+        <label class="toggle"><span class="t"><span>남녀 짝</span><span class="tiny">짝은 남학생 1명 + 여학생 1명</span></span><input type="checkbox" checked><span class="sw"></span></label>
+      </div>
+
+      <div class="card pad" style="display:flex;flex-direction:column;gap:10px">
+        <h3>“붙지 않게”의 범위</h3>
+        <div class="scope">
+          <div class="mini" aria-hidden="true"><i class="no"></i><i class="no"></i><i></i><i class="no"></i><i class="me"></i><i></i><i class="no"></i><i class="no"></i><i></i></div>
+          <p class="tiny" style="margin:0">짝 · 앞뒤 · 대각선까지 붙은 것으로 봅니다. 통로 건너 옆 분단은 붙은 것이 아닙니다.</p>
+        </div>
+      </div>
+
+      <div class="note"><b>반드시</b>는 절대 어기지 않고, <b>되도록</b>은 가능한 한 지킵니다. 반드시 조건끼리 부딪히면 어떤 조건 때문인지 알려 드려요.</div>
+
+      <button type="button" class="btn primary block" data-go="result">자리 뽑기</button>
+    </div>
+  </section>
+
+  <!-- 3. 결과 -->
+  <section class="view" id="result" hidden>
+    <div class="grow">
+      <div class="conflict" id="conflict" hidden>
+        <b>이 조건으로는 자리를 만들 수 없어요</b>
+        <ul>
+          <li>“앞 2줄 안에”(반드시)인 남학생이 7명 — <span class="name">박도윤</span> <span class="name">정시우</span> <span class="name">한지호</span> <span class="name">권유준</span> <span class="name">안건우</span> <span class="name">서은우</span> <span class="name">문이안</span></li><li>그런데 “남녀 짝”이 켜져 있어서 앞 2줄의 남학생 자리는 6개뿐입니다.</li>
+        </ul>
+        <div class="row" style="flex-wrap:wrap"><button type="button" class="btn" data-go="rules">조건 고치기</button><span class="tiny" style="color:inherit">또는 그중 일부를 “되도록”으로 바꾸면 가장 가깝게 맞춰 드려요.</span></div>
+      </div>
+
+      <div class="card pad" style="display:flex;flex-direction:column;gap:18px">
+        <div class="between">
+          <div><h2>새 자리</h2><p class="sub">9월 17일 · 후보 수천 개 중 조건을 가장 잘 지킨 배치</p></div>
+          <div class="seg" role="group" aria-label="보는 방향">
+            <button type="button" aria-pressed="true" data-view="student">학생 시점</button>
+            <button type="button" aria-pressed="false" data-view="teacher">교사 시점</button>
+          </div>
+        </div>
+        <div class="chart-wrap"><div class="chart" id="newChart"></div></div>
+        <div class="legend">
+          <span><i style="background:var(--boy)"></i>남</span><span><i style="background:var(--girl)"></i>여</span>
+          <span><i style="background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:3px"></i>조건이 걸린 학생</span>
+          <span>작은 글씨 = 지난 자리 (줄-분단)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="card pad">
+        <div class="between" style="margin-bottom:6px"><h3>조건 확인</h3><span style="font-size:13px;color:var(--accent);font-weight:500">7개 모두 지킴</span></div>
+        <div id="checks"></div>
+      </div>
+      <div class="row"><button type="button" class="btn" style="flex:1">다시 뽑기</button><button type="button" class="btn" style="flex:1">인쇄 · 크게 보기</button></div>
+      <button type="button" class="btn primary block">이 자리로 확정</button>
+      <p class="tiny" style="text-align:center;margin:0">확정하면 다음번 ‘지난 자리’로 저장됩니다.</p>
+    </div>
+  </section>
+</main>
+
+<script>
+  const G = { 김민준:'m',이서연:'w',박도윤:'m',최하은:'w',정시우:'m',강지유:'w',조서준:'m',윤하린:'w',장예준:'m',임수아:'w',한지호:'m',오채원:'w',
+              서은우:'m',신지안:'w',권유준:'m',황다은:'w',안건우:'m',송윤서:'w',류현우:'m',전소율:'w',홍주원:'m',고아린:'w',문이안:'m',양나은:'w' };
+  const OLD = [
+    ['김민준','이서연','박도윤','최하은','정시우','강지유'],
+    ['조서준','윤하린','장예준','임수아','한지호','오채원'],
+    ['서은우','신지안','권유준','황다은','안건우','송윤서'],
+    ['류현우','전소율','홍주원','고아린','문이안','양나은']
+  ];
+  const NEW = [
+    ['박도윤','강지유','오채원','류현우','윤하린','정시우'],
+    ['이서연','서은우','권유준','전소율','황다은','장예준'],
+    ['신지안','홍주원','안건우','고아린','김민준','임수아'],
+    ['한지호','양나은','최하은','문이안','조서준','송윤서']
+  ];
+  const TAGGED = ['김민준','이서연','정시우','한지호','박도윤','안건우','고아린'];
+  const WHERE = {};
+  OLD.forEach((r, ri) => r.forEach((n, ci) => { WHERE[n] = (ri + 1) + '-' + (Math.floor(ci / 2) + 1); }));
+
+  const empty = new Set();
+
+  function seatEl(name, opts) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'seat';
+    if (opts.key && empty.has(opts.key)) {
+      b.classList.add('empty');
+      b.innerHTML = '<span class="f">빈자리</span>';
+    } else {
+      if (opts.tag && TAGGED.includes(name)) b.classList.add('tag');
+      b.innerHTML = '<span class="g ' + G[name] + '"></span><span class="n">' + name + '</span>' +
+        (opts.from ? '<span class="f">' + WHERE[name] + '</span>' : '');
+    }
+    b.setAttribute('aria-label', name);
+    if (opts.key) b.addEventListener('click', () => { empty.has(opts.key) ? empty.delete(opts.key) : empty.add(opts.key); drawOld(); });
+    return b;
+  }
+
+  function drawChart(el, grid, opts, flip) {
+    el.innerHTML = '';
+    const board = document.createElement('div');
+    board.className = 'board';
+    board.textContent = '칠판 · 교탁';
+    let rows = grid.map((r, ri) => ({ r, ri }));
+    if (flip) rows = rows.slice().reverse();
+    if (!flip) el.appendChild(board);
+    rows.forEach(({ r, ri }) => {
+      const row = document.createElement('div');
+      row.className = 'srow';
+      let cells = r.map((n, ci) => ({ n, ci }));
+      if (flip) cells = cells.slice().reverse();
+      for (let i = 0; i < cells.length; i += 2) {
+        const pair = document.createElement('div');
+        pair.className = 'pair';
+        pair.appendChild(seatEl(cells[i].n, { ...opts, key: opts.editable ? ri + ':' + cells[i].ci : null }));
+        pair.appendChild(seatEl(cells[i + 1].n, { ...opts, key: opts.editable ? ri + ':' + cells[i + 1].ci : null }));
+        row.appendChild(pair);
+      }
+      el.appendChild(row);
+    });
+    if (flip) el.appendChild(board);
+  }
+
+  const drawOld = () => drawChart(document.getElementById('oldChart'), OLD, { editable: true }, false);
+  let teacher = false;
+  const drawNew = () => drawChart(document.getElementById('newChart'), NEW, { tag: true, from: true }, teacher);
+
+  // rules
+  let rules = [
+    { said: '민준이랑 서연이 붙지 않게', a: '김민준', b: '이서연', kind: '서로 붙지 않기', must: true },
+    { said: '정시우와 한지호는 되도록 멀리', a: '정시우', b: '한지호', kind: '최대한 멀리', must: false },
+    { said: '도윤이는 앞줄에 (시력)', a: '박도윤', kind: '앞 2줄 안에', must: true },
+    { said: '안건우, 고아린 짝으로', a: '안건우', b: '고아린', kind: '짝으로 앉히기', must: false },
+    { said: '하린이 칠판 글씨가 잘 안 보인대요', a: '윤하린', kind: null, must: true }
+  ];
+  const KINDS = ['서로 붙지 않기', '최대한 멀리', '짝으로 앉히기', '앞 2줄 안에', '뒤 2줄 안에', '창가 쪽', '복도 쪽'];
+
+  function drawRules() {
+    const list = document.getElementById('ruleList');
+    list.innerHTML = '';
+    rules.forEach((r, i) => {
+      const d = document.createElement('div');
+      d.className = 'rule' + (r.kind ? '' : ' fix');
+      const names = '<span class="name">' + r.a + '</span>' + (r.b ? ' <span class="tiny">·</span> <span class="name">' + r.b + '</span>' : '');
+      const kind = r.kind
+        ? '<span style="font-weight:500">' + r.kind + '</span>'
+        : '<select aria-label="조건 종류 고르기"><option>무슨 조건인지 골라 주세요</option>' + KINDS.map(k => '<option>' + k + '</option>').join('') + '</select>';
+      d.innerHTML =
+        '<div class="body"><span class="said">“' + r.said + '”' + (r.kind ? '' : ' — 이름은 찾았는데 조건을 못 알아들었어요') + '</span>' +
+        '<div class="row" style="flex-wrap:wrap">' + names + ' ' + kind + '</div></div>' +
+        '<div class="seg" role="group" aria-label="강도"><button type="button" aria-pressed="' + r.must + '">반드시</button><button type="button" aria-pressed="' + !r.must + '">되도록</button></div>' +
+        '<button type="button" class="x" aria-label="조건 삭제"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>';
+      const [mustB, tryB] = d.querySelectorAll('.seg button');
+      mustB.onclick = () => { r.must = true; drawRules(); };
+      tryB.onclick = () => { r.must = false; drawRules(); };
+      d.querySelector('.x').onclick = () => { rules.splice(i, 1); drawRules(); };
+      const sel = d.querySelector('select');
+      if (sel) sel.onchange = () => { if (sel.selectedIndex > 0) { r.kind = sel.value; drawRules(); } };
+      list.appendChild(d);
+    });
+    document.getElementById('ruleCount').textContent = rules.length;
+  }
+
+  document.getElementById('ruleForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const inp = document.getElementById('ruleInput');
+    const text = inp.value.trim();
+    if (!text) return;
+    const found = Object.keys(G).filter(n => text.includes(n) || text.includes(n.slice(1)));
+    let kind = null;
+    if (/붙지|떨어/.test(text)) kind = '서로 붙지 않기';
+    else if (/멀리/.test(text)) kind = '최대한 멀리';
+    else if (/짝|같이/.test(text)) kind = '짝으로 앉히기';
+    else if (/앞줄|앞자리|앞에/.test(text)) kind = '앞 2줄 안에';
+    else if (/뒷줄|뒷자리|뒤에/.test(text)) kind = '뒤 2줄 안에';
+    else if (/창가/.test(text)) kind = '창가 쪽';
+    rules.push({ said: text, a: found[0] || '(이름 확인 필요)', b: found[1], kind, must: !/되도록|가능하면/.test(text) });
+    inp.value = '';
+    drawRules();
+  });
+
+  const CHECKS = [
+    ['김민준 · 이서연 붙지 않기', '반드시'],
+    ['정시우 · 한지호 멀리', '가장 먼 자리'],
+    ['박도윤 앞 2줄', '1줄'],
+    ['안건우 · 고아린 짝', '3줄 2분단'],
+    ['지난 자리와 겹침', '0명'],
+    ['지난 짝과 다시 짝', '0쌍'],
+    ['남녀 짝', '12쌍 모두']
+  ];
+  document.getElementById('checks').innerHTML = CHECKS.map(([t, n]) =>
+    '<div class="check"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#2E6B5E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5l3.2 3L14 5.5"/></svg><span>' + t + '</span><span class="tiny">' + n + '</span></div>'
+  ).join('');
+
+  // navigation
+  function go(id) {
+    ['setup', 'rules', 'result'].forEach(v => { document.getElementById(v).hidden = v !== id; });
+    document.querySelectorAll('nav button').forEach(b => b.setAttribute('aria-current', b.dataset.go === id));
+    window.scrollTo(0, 0);
+  }
+  document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => {
+    if (b.closest('#conflict')) document.getElementById('conflict').hidden = true;
+    go(b.dataset.go);
+  }));
+  document.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => {
+    teacher = b.dataset.view === 'teacher';
+    document.querySelectorAll('[data-view]').forEach(x => x.setAttribute('aria-pressed', x === b));
+    drawNew();
+  }));
+  document.getElementById('demoConflict').addEventListener('click', () => {
+    document.getElementById('conflict').hidden = false;
+    go('result');
+  });
+
+  drawOld(); drawRules(); drawNew();
+</script>
+</body>
+</html>
